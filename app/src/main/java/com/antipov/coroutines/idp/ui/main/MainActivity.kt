@@ -2,6 +2,7 @@ package com.antipov.coroutines.idp.ui.main
 
 import android.os.Bundle
 import com.antipov.coroutines.idp.R
+import com.antipov.coroutines.idp.data.retrofit.RetrofitFactory
 import com.antipov.coroutines.idp.navigation.AppNavigator
 import com.antipov.coroutines.idp.ui.base.BaseActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -30,9 +31,8 @@ class MainActivity : BaseActivity(), MainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         GlobalScope.launch {
-            delay(1000)
-            println("Kotlin Coroutines World in launch")
+            val result = RetrofitFactory.makeRetrofitService().getStockForDay().await()
+            result.toString()
         }
-        println("Kotlin Coroutines World!")
     }
 }
