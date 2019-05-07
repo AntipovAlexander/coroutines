@@ -5,6 +5,7 @@ import com.antipov.coroutines.idp.data.model.StockPrice
 import com.antipov.coroutines.idp.data.parser.StockPriceParser
 import com.antipov.coroutines.idp.data.retrofit.ApiHelper
 import com.antipov.coroutines.idp.data.retrofit.Service
+import com.antipov.coroutines.idp.di.qualifiers.ApiKeyInterceptor
 import com.antipov.coroutines.idp.di.qualifiers.LoggingInterceptor
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -20,7 +21,9 @@ import javax.inject.Singleton
 @Module
 class DataModule {
 
+    // todo: move to gradle
     private val BASE_URL = "https://www.quandl.com/api/v3/datasets/"
+    private val API_KEY = "xw3sqcPrQ42gQnuv4sJQ"
 
     @Provides
     @Singleton
@@ -32,10 +35,14 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(@LoggingInterceptor loggingInterceptor: Interceptor): OkHttpClient {
+    fun provideOkHttpClient(
+        @LoggingInterceptor loggingInterceptor: Interceptor,
+        @LoggingInterceptor apiKeyInterceptor: Interceptor
+    ): OkHttpClient {
         val builder = OkHttpClient
             .Builder()
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(apiKeyInterceptor)
         return builder.build()
     }
 
@@ -68,5 +75,17 @@ class DataModule {
     @Provides
     fun provideApiHelper(apiService: Service): ApiHelper {
         return ApiHelper(apiService)
+    }
+
+    @Provides
+    @ApiKeyInterceptor
+    @Singleton
+    fun provideHeaderInterceptor(): Interceptor {
+        return Interceptor { chain ->
+            val newUrl = chain.request().url().newBuilder().addQueryParameter("api_key", API_KEY).build()
+
+            val request = chain.request().newBuilder().url(newUrl).build()
+            chain.proceed(request)
+        }
     }
 }
