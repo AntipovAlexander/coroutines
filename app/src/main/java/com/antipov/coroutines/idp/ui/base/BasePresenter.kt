@@ -2,18 +2,20 @@ package com.antipov.coroutines.idp.ui.base
 
 import com.arellomobile.mvp.MvpPresenter
 import com.arellomobile.mvp.MvpView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlin.coroutines.CoroutineContext
 
-abstract class BasePresenter<V : MvpView> : MvpPresenter<V>() {
+abstract class BasePresenter<V : MvpView> : MvpPresenter<V>(), CoroutineScope {
 
-    // todo: implement CompositeJob
+    protected val compositeJob = Job()
 
-//    private val compositeDisposable = CompositeDisposable()
-//
-//    override fun onDestroy() {
-//        compositeDisposable.dispose()
-//    }
-//
-//    protected fun Disposable.addToDisposables() {
-//        compositeDisposable.add(this)
-//    }
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO + compositeJob
+
+    override fun onDestroy() {
+        compositeJob.cancel()
+        super.onDestroy()
+    }
 }
