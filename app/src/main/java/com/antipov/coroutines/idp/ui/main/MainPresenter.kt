@@ -1,36 +1,33 @@
 package com.antipov.coroutines.idp.ui.main
 
+import android.annotation.SuppressLint
 import com.antipov.coroutines.idp.data.repository.StocksRepository
 import com.antipov.coroutines.idp.ui.base.BasePresenter
 import com.arellomobile.mvp.InjectViewState
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.ticker
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.CancellationException
+import java.text.SimpleDateFormat
+import java.util.*
 
 @UseExperimental(ObsoleteCoroutinesApi::class)
+@SuppressLint("SimpleDateFormat")
 @InjectViewState
-class MainPresenter(private val repository: StocksRepository) : BasePresenter<MainView>() {
+class MainPresenter(
+    private val repository: StocksRepository,
+    private val startDayCalendar: Calendar,
+    private val endDayCalendar: Calendar,
+    private val dateFormat: SimpleDateFormat
+) : BasePresenter<MainView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-
         val tickerChannel = ticker(delayMillis = 1_000, initialDelayMillis = 0)
-
         launch {
             for (event in tickerChannel) {
-                Timber.d("Tick!")
-            }
-        }
-
-        launch(compositeJob) {
-            try {
-                val data = repository.getStocksAsync().await()
-                data.toString()
-            } catch (t: CancellationException) {
-                Timber.d("Cancelled!! 1")
+                startDayCalendar.add(Calendar.DATE, 1)
+                Timber.d(dateFormat.format(startDayCalendar.timeInMillis))
             }
         }
     }
