@@ -4,5 +4,5 @@ import com.antipov.coroutines.idp.data.model.StockPrice
 import kotlinx.coroutines.Deferred
 
 interface StocksRepository {
-    fun getStocksAsync(): Deferred<StockPrice>
+    fun getStocksAsync(day: String): Deferred<StockPrice>
 }

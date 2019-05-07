@@ -27,7 +27,9 @@ class MainPresenter(
         launch {
             for (event in tickerChannel) {
                 startDayCalendar.add(Calendar.DATE, 1)
-                Timber.d(dateFormat.format(startDayCalendar.timeInMillis))
+                val formattedDay = dateFormat.format(startDayCalendar.timeInMillis)
+                val stock = repository.getStocksAsync(formattedDay).await()
+                Timber.d(stock.stockDate)
             }
         }
     }

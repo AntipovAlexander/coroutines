@@ -1,5 +1,5 @@
 package com.antipov.coroutines.idp.data.retrofit
 
 class ApiHelper(private val apiService: Service) {
-    fun getStocksAsync() = apiService.getStockForDayAsync()
+    fun getStocksAsync(day: String) = apiService.getStockForDayAsync(day, day)
 }
