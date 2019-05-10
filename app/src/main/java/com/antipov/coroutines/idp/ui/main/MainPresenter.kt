@@ -29,9 +29,15 @@ class MainPresenter(
                 startDayCalendar.add(Calendar.DATE, 1)
                 val formattedDay = dateFormat.format(startDayCalendar.timeInMillis)
                 val stock = repository.getStocksAsync(formattedDay).await()
+                repository.saveStockToDb(stock)
                 Timber.d(stock.stockDate)
             }
         }
+    }
+
+    override fun onDestroy() {
+        repository.dropAllStocksInDb()
+        super.onDestroy()
     }
 
 }

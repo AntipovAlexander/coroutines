@@ -1,6 +1,8 @@
 package com.antipov.coroutines.idp.di
 
+import android.app.Application
 import com.antipov.coroutines.idp.BuildConfig
+import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper
 import com.antipov.coroutines.idp.data.model.StockPrice
 import com.antipov.coroutines.idp.data.parser.StockPriceParser
 import com.antipov.coroutines.idp.data.retrofit.ApiHelper
@@ -88,4 +90,8 @@ class DataModule {
             chain.proceed(request)
         }
     }
+
+    @Provides
+    @Singleton
+    fun provideStockDbHelper(application: Application) = StockPriceDbHelper.getInstance(application.applicationContext)
 }

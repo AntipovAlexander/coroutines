@@ -1,6 +1,8 @@
 package com.antipov.coroutines.idp.ui.main.di
 
 import com.antipov.coroutines.idp.R
+import com.antipov.coroutines.idp.data.db.dao.StockPriceDao
+import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper
 import com.antipov.coroutines.idp.data.repository.StocksRepository
 import com.antipov.coroutines.idp.data.repository.impl.StocksRepositoryImpl
 import com.antipov.coroutines.idp.data.retrofit.ApiHelper
@@ -36,7 +38,8 @@ class MainScreenModule {
 
     @Provides
     @MainScreenScope
-    fun provideStocksRepository(apiHelper: ApiHelper): StocksRepository = StocksRepositoryImpl(apiHelper)
+    fun provideStocksRepository(apiHelper: ApiHelper, stockPriceDbHelper: StockPriceDbHelper): StocksRepository =
+        StocksRepositoryImpl(apiHelper, StockPriceDao(stockPriceDbHelper))
 
     @Provides
     @MainScreenScope

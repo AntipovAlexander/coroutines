@@ -5,4 +5,6 @@ import kotlinx.coroutines.Deferred
 
 interface StocksRepository {
     fun getStocksAsync(day: String): Deferred<StockPrice>
+    fun dropAllStocksInDb()
+    suspend fun saveStockToDb(stockPrice: StockPrice)
 }
