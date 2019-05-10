@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">CoroutinesIDP</string>
+    <string name="stock_date">Stock date: %s</string>
+    <string name="open">Open: %s</string>
+    <string name="high">High: %s</string>
+    <string name="low">Low: %s</string>
+    <string name="close">Close: %s</string>
 </resources>

@@ -3,7 +3,6 @@ package com.antipov.coroutines.idp.data.db.dao
 import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper
 import com.antipov.coroutines.idp.data.model.StockPrice
 import kotlinx.coroutines.channels.Channel
-import org.jetbrains.anko.db.dropTable
 import org.jetbrains.anko.db.insert
 
 /**

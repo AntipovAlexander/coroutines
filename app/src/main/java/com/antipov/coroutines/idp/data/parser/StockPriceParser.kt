@@ -20,7 +20,7 @@ class StockPriceParser : JsonDeserializer<StockPrice> {
                 return StockPrice(date, StockPrice.Data(open, high, low, close))
             }
         } ?: kotlin.run {
-            return StockPrice("", null)
+            return StockPrice("", StockPrice.Data(0.0f, 0.0f, 0.0f, 0.0f))
         }
     }
 

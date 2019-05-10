@@ -1,9 +1,12 @@
 package com.antipov.coroutines.idp.ui.main
 
 import android.annotation.SuppressLint
+import com.antipov.coroutines.idp.data.model.StockPrice
 import com.antipov.coroutines.idp.data.repository.StocksRepository
 import com.antipov.coroutines.idp.ui.base.BasePresenter
 import com.arellomobile.mvp.InjectViewState
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.ticker
 import kotlinx.coroutines.launch
@@ -21,20 +24,39 @@ class MainPresenter(
     private val dateFormat: SimpleDateFormat
 ) : BasePresenter<MainView>() {
 
+    lateinit var prevStockPrice: StockPrice
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.d(throwable)
+    }
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         val stockUpdatesChannel = repository.getStockChannel()
-        launch {
-            for (update in stockUpdatesChannel) {
-                Timber.d(update.stockDate)
+        launch(Dispatchers.Main) {
+            for (stock in stockUpdatesChannel) {
+                viewState.updateUi(stock)
             }
         }
         val tickerChannel = ticker(delayMillis = 1_000, initialDelayMillis = 0)
-        launch {
-            for (event in tickerChannel) {
+        launch(exceptionHandler) {
+            loop@ for (event in tickerChannel) {
                 startDayCalendar.add(Calendar.DATE, 1)
                 val formattedDay = dateFormat.format(startDayCalendar.timeInMillis)
                 val stock = repository.getStocksAsync(formattedDay).await()
+                if (stock.stockDate.isEmpty()) continue@loop
+                if (!::prevStockPrice.isInitialized) {
+                    prevStockPrice = stock
+                } else {
+                    launch(Dispatchers.Main) {
+                        if (stock.data.close > prevStockPrice.data.close) {
+                            viewState.setViewAsGrowth()
+                        } else {
+                            viewState.setViewAsDesc()
+                        }
+                        prevStockPrice = stock
+                    }
+                }
                 repository.saveStockToDb(stock)
             }
         }
