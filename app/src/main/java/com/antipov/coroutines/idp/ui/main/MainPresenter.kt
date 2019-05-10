@@ -23,6 +23,12 @@ class MainPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        val stockUpdatesChannel = repository.getStockChannel()
+        launch {
+            for (update in stockUpdatesChannel) {
+                Timber.d(update.stockDate)
+            }
+        }
         val tickerChannel = ticker(delayMillis = 1_000, initialDelayMillis = 0)
         launch {
             for (event in tickerChannel) {
@@ -30,7 +36,6 @@ class MainPresenter(
                 val formattedDay = dateFormat.format(startDayCalendar.timeInMillis)
                 val stock = repository.getStocksAsync(formattedDay).await()
                 repository.saveStockToDb(stock)
-                Timber.d(stock.stockDate)
             }
         }
     }

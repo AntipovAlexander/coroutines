@@ -15,4 +15,6 @@ class StocksRepositoryImpl(
     override fun getStocksAsync(day: String) = apiHelper.getStocksAsync(day)
 
     override fun dropAllStocksInDb() = stockPriceDao.dropAll()
+
+    override fun getStockChannel() = stockPriceDao.getUpdatesChannel()
 }
