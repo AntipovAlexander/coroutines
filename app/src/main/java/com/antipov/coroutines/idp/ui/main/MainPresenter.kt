@@ -32,6 +32,7 @@ class MainPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        repository.dropAllStocksInDb()
         val stockUpdatesChannel = repository.getStockChannel()
         launch(Dispatchers.Main) {
             for (stock in stockUpdatesChannel) {
@@ -61,10 +62,4 @@ class MainPresenter(
             }
         }
     }
-
-    override fun onDestroy() {
-        repository.dropAllStocksInDb()
-        super.onDestroy()
-    }
-
 }

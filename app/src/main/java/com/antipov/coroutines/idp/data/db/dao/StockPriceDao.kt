@@ -1,6 +1,7 @@
 package com.antipov.coroutines.idp.data.db.dao
 
 import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper
+import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper.Companion.TABLE_NAME
 import com.antipov.coroutines.idp.data.model.StockPrice
 import kotlinx.coroutines.channels.Channel
 import org.jetbrains.anko.db.insert
@@ -18,10 +19,10 @@ class StockPriceDao(private val helper: StockPriceDbHelper) {
                 insert(
                     TABLE_NAME,
                     DATE_COLUMN to stockPrice.stockDate,
-                    OPEN_COLUMN to stockPrice.data?.open,
-                    HIGH_COLUMN to stockPrice.data?.high,
-                    LOW_COLUMN to stockPrice.data?.low,
-                    CLOSE_COLUMN to stockPrice.data?.close
+                    OPEN_COLUMN to stockPrice.data.open,
+                    HIGH_COLUMN to stockPrice.data.high,
+                    LOW_COLUMN to stockPrice.data.low,
+                    CLOSE_COLUMN to stockPrice.data.close
                 )
                 stockUpdatesChannel.offer(stockPrice)
             }
@@ -29,10 +30,7 @@ class StockPriceDao(private val helper: StockPriceDbHelper) {
     }
 
     fun dropAll() {
-        // todo: clear, not drop
-//        helper.use {
-//            dropTable(StockPriceDbHelper.TABLE_NAME, true)
-//        }
+        helper.use { execSQL("delete from $TABLE_NAME") }
     }
 
     fun getUpdatesChannel(): Channel<StockPrice> = stockUpdatesChannel
