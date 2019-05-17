@@ -1,5 +1,6 @@
 package com.antipov.coroutines.idp.ui.main
 
+import android.os.Bundle
 import com.antipov.coroutines.idp.R
 import com.antipov.coroutines.idp.data.model.StockPrice
 import com.antipov.coroutines.idp.navigation.AppNavigator
@@ -7,6 +8,7 @@ import com.antipov.coroutines.idp.ui.base.BaseActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import javax.inject.Inject
 
 class MainActivity : BaseActivity(), MainView {
@@ -24,6 +26,11 @@ class MainActivity : BaseActivity(), MainView {
     override val layoutRes = R.layout.activity_main
 
     override fun getActivityNavigator() = navigator
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        goToCalc.onClick { presenter.openCalc() }
+    }
 
     override fun updateUi(stock: StockPrice) {
         stockDateValue.text = getString(R.string.stock_date, stock.stockDate)

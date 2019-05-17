@@ -3,6 +3,7 @@ package com.antipov.coroutines.idp.ui.main
 import android.annotation.SuppressLint
 import com.antipov.coroutines.idp.data.model.StockPrice
 import com.antipov.coroutines.idp.data.repository.StocksRepository
+import com.antipov.coroutines.idp.navigation.Screens
 import com.antipov.coroutines.idp.ui.base.BasePresenter
 import com.arellomobile.mvp.InjectViewState
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -10,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.ticker
 import kotlinx.coroutines.launch
+import ru.terrakok.cicerone.Router
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -19,6 +21,7 @@ import java.util.*
 @InjectViewState
 class MainPresenter(
     private val repository: StocksRepository,
+    private val router: Router,
     private val startDayCalendar: Calendar,
     private val endDayCalendar: Calendar,
     private val dateFormat: SimpleDateFormat
@@ -39,7 +42,7 @@ class MainPresenter(
                 viewState.updateUi(stock)
             }
         }
-        val tickerChannel = ticker(delayMillis = 1_000, initialDelayMillis = 0)
+        val tickerChannel = ticker(delayMillis = 500, initialDelayMillis = 0)
         launch(exceptionHandler) {
             loop@ for (event in tickerChannel) {
                 startDayCalendar.add(Calendar.DATE, 1)
@@ -61,5 +64,9 @@ class MainPresenter(
                 repository.saveStockToDb(stock)
             }
         }
+    }
+
+    fun openCalc() {
+        router.navigateTo(Screens.Calculator)
     }
 }

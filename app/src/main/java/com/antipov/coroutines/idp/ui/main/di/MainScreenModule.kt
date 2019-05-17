@@ -13,6 +13,7 @@ import com.antipov.coroutines.idp.ui.main.di.qualifiers.EndDayCalendar
 import com.antipov.coroutines.idp.ui.main.di.qualifiers.StartDayCalendar
 import dagger.Module
 import dagger.Provides
+import ru.terrakok.cicerone.Router
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -26,11 +27,12 @@ class MainScreenModule {
     @MainScreenScope
     fun providePresenter(
         repository: StocksRepository,
+        router: Router,
         @StartDayCalendar startDayCalendar: Calendar,
         @EndDayCalendar endDayCalendar: Calendar,
         dateFormat: SimpleDateFormat
     ) =
-        MainPresenter(repository, startDayCalendar, endDayCalendar, dateFormat)
+        MainPresenter(repository, router, startDayCalendar, endDayCalendar, dateFormat)
 
     @Provides
     @MainScreenScope
