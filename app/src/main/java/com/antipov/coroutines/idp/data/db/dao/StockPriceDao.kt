@@ -4,7 +4,9 @@ import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper
 import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper.Companion.TABLE_NAME
 import com.antipov.coroutines.idp.data.model.StockPrice
 import kotlinx.coroutines.channels.Channel
+import org.jetbrains.anko.db.MapRowParser
 import org.jetbrains.anko.db.insert
+import org.jetbrains.anko.db.select
 
 /**
  * CRUD
@@ -27,6 +29,28 @@ class StockPriceDao(private val helper: StockPriceDbHelper) {
                 stockUpdatesChannel.offer(stockPrice)
             }
         }
+    }
+
+    fun getAll(): MutableList<StockPrice> {
+        val list = mutableListOf<StockPrice>()
+        helper.use {
+            select(TABLE_NAME)
+                .parseList(object : MapRowParser<MutableList<StockPrice>> {
+                    override fun parseRow(columns: Map<String, Any?>): MutableList<StockPrice> {
+                        with(columns) {
+                            val stockDate = getValue(StockPriceDbHelper.DATE_COLUMN).toString()
+                            val open = getValue(StockPriceDbHelper.OPEN_COLUMN).toString().toFloat()
+                            val high = getValue(StockPriceDbHelper.HIGH_COLUMN).toString().toFloat()
+                            val low = getValue(StockPriceDbHelper.LOW_COLUMN).toString().toFloat()
+                            val close = getValue(StockPriceDbHelper.CLOSE_COLUMN).toString().toFloat()
+                            val dataObj = StockPrice.Data(open, high, low, close)
+                            list.add(StockPrice(stockDate, dataObj))
+                        }
+                        return list
+                    }
+                })
+        }
+        return list
     }
 
     fun dropAll() {

@@ -6,6 +6,7 @@ import kotlinx.coroutines.channels.Channel
 
 interface StocksRepository {
     fun getStocksAsync(day: String): Deferred<StockPrice>
+    suspend fun getAllStocksInDbAsync(): MutableList<StockPrice>
     fun dropAllStocksInDb()
     suspend fun saveStockToDb(stockPrice: StockPrice)
     fun getStockChannel(): Channel<StockPrice>

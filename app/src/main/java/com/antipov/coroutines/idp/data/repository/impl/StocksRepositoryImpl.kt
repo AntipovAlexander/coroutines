@@ -9,6 +9,7 @@ class StocksRepositoryImpl(
     private val apiHelper: ApiHelper,
     private val stockPriceDao: StockPriceDao
 ) : StocksRepository {
+    override suspend fun getAllStocksInDbAsync(): MutableList<StockPrice> = stockPriceDao.getAll()
 
     override suspend fun saveStockToDb(stockPrice: StockPrice) = stockPriceDao.create(stockPrice)
 
