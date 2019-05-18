@@ -5,4 +5,8 @@
     <string name="high">High: %s</string>
     <string name="low">Low: %s</string>
     <string name="close">Close: %s</string>
+    <string name="star_end_date_format">Start date: %1$s, end date: %2$s</string>
+    <string name="progress">Progress:</string>
+    <string name="result_is_not_calculated_yet">Result is not calculated yet.</string>
+    <string name="result_format">Highest stock price (%1$f) was on %2$s</string>
 </resources>
