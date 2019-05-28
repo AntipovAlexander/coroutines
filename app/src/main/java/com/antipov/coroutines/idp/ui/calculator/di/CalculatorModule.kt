@@ -12,7 +12,6 @@ import com.antipov.coroutines.idp.ui.calculator.CalculatorInteractor
 import com.antipov.coroutines.idp.ui.calculator.CalculatorPresenter
 import dagger.Module
 import dagger.Provides
-import java.text.SimpleDateFormat
 
 @Module
 class CalculatorModule {
@@ -23,12 +22,8 @@ class CalculatorModule {
 
     @Provides
     @CalculatorScope
-    fun provideStartDayFormat() = SimpleDateFormat("yyyy-MM-dd")
-
-    @Provides
-    @CalculatorScope
-    fun providePresenter(repository: StocksRepository, dateFormat: SimpleDateFormat, calculatorInteractor: CalculatorInteractor) =
-        CalculatorPresenter(repository, dateFormat, calculatorInteractor)
+    fun providePresenter(repository: StocksRepository, calculatorInteractor: CalculatorInteractor) =
+        CalculatorPresenter(repository, calculatorInteractor)
 
     @Provides
     @CalculatorScope

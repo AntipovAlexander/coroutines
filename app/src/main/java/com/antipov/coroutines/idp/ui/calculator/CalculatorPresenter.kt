@@ -6,12 +6,10 @@ import com.antipov.coroutines.idp.ui.base.BasePresenter
 import com.arellomobile.mvp.InjectViewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 
 @InjectViewState
 class CalculatorPresenter(
     private val repository: StocksRepository,
-    private val dateFormat: SimpleDateFormat,
     private val calculatorInteractor: CalculatorInteractor
 ) : BasePresenter<CalculatorView>(), CalculatorInteractor.Callback {
 
@@ -19,6 +17,7 @@ class CalculatorPresenter(
         super.onFirstViewAttach()
         launch {
             val data = repository.getAllStocksInDbAsync()
+            val first = repository.getFirstStock()
             launch(Dispatchers.Main) {
                 viewState.setDates(data.first().stockDate, data.last().stockDate)
                 viewState.setProgressMax(data.size)

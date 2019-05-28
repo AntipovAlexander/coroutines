@@ -56,6 +56,26 @@ class StockPriceDao(private val helper: StockPriceDbHelper) {
         return list
     }
 
+    fun getFirstItem(): StockPrice {
+        return helper.use {
+            select(TABLE_NAME)
+                .limit(1)
+                .parseSingle(object : MapRowParser<StockPrice> {
+                    override fun parseRow(columns: Map<String, Any?>): StockPrice {
+                        with(columns) {
+                            val stockDate = getValue(StockPriceDbHelper.DATE_COLUMN).toString()
+                            val open = getValue(StockPriceDbHelper.OPEN_COLUMN).toString().toFloat()
+                            val high = getValue(StockPriceDbHelper.HIGH_COLUMN).toString().toFloat()
+                            val low = getValue(StockPriceDbHelper.LOW_COLUMN).toString().toFloat()
+                            val close = getValue(StockPriceDbHelper.CLOSE_COLUMN).toString().toFloat()
+                            val dataObj = StockPrice.Data(open, high, low, close)
+                            return StockPrice(stockDate, dataObj)
+                        }
+                    }
+                })
+        }
+    }
+
     fun dropAll() {
         helper.use { execSQL("delete from $TABLE_NAME") }
     }
