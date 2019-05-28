@@ -1,6 +1,11 @@
 package com.antipov.coroutines.idp.data.db.dao
 
 import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper
+import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper.Companion.CLOSE_COLUMN
+import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper.Companion.DATE_COLUMN
+import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper.Companion.HIGH_COLUMN
+import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper.Companion.LOW_COLUMN
+import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper.Companion.OPEN_COLUMN
 import com.antipov.coroutines.idp.data.db.helpers.StockPriceDbHelper.Companion.TABLE_NAME
 import com.antipov.coroutines.idp.data.model.StockPrice
 import kotlinx.coroutines.channels.Channel
@@ -16,18 +21,16 @@ class StockPriceDao(private val helper: StockPriceDbHelper) {
     private var stockUpdatesChannel = Channel<StockPrice>()
 
     fun create(stockPrice: StockPrice) {
-        with(StockPriceDbHelper) {
-            helper.use {
-                insert(
-                    TABLE_NAME,
-                    DATE_COLUMN to stockPrice.stockDate,
-                    OPEN_COLUMN to stockPrice.data.open,
-                    HIGH_COLUMN to stockPrice.data.high,
-                    LOW_COLUMN to stockPrice.data.low,
-                    CLOSE_COLUMN to stockPrice.data.close
-                )
-                stockUpdatesChannel.offer(stockPrice)
-            }
+        helper.use {
+            insert(
+                TABLE_NAME,
+                DATE_COLUMN to stockPrice.stockDate,
+                OPEN_COLUMN to stockPrice.data.open,
+                HIGH_COLUMN to stockPrice.data.high,
+                LOW_COLUMN to stockPrice.data.low,
+                CLOSE_COLUMN to stockPrice.data.close
+            )
+            stockUpdatesChannel.offer(stockPrice)
         }
     }
 

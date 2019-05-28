@@ -40,12 +40,7 @@ class MainActivity : BaseActivity(), MainView {
         closeValue.text = getString(R.string.close, stock.data.close.toString())
     }
 
-    override fun setViewAsGrowth() {
-        arrow.setImageResource(R.drawable.ic_arrow_growth)
-    }
+    override fun setViewAsGrowth() = arrow.setImageResource(R.drawable.ic_arrow_growth)
 
-    override fun setViewAsDesc() {
-        arrow.setImageResource(R.drawable.ic_arrow_desc)
-    }
-
+    override fun setViewAsDesc() = arrow.setImageResource(R.drawable.ic_arrow_desc)
 }

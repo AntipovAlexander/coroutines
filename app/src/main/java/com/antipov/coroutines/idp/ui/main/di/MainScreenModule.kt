@@ -20,6 +20,7 @@ import java.util.*
 @Module
 class MainScreenModule {
 
+    // todo: just hardcode in test purposes.
     private val startDayStr = "1980-12-12"
     private val endDayStr = "2018-03-27"
 
@@ -29,10 +30,9 @@ class MainScreenModule {
         repository: StocksRepository,
         router: Router,
         @StartDayCalendar startDayCalendar: Calendar,
-        @EndDayCalendar endDayCalendar: Calendar,
         dateFormat: SimpleDateFormat
     ) =
-        MainPresenter(repository, router, startDayCalendar, endDayCalendar, dateFormat)
+        MainPresenter(repository, router, startDayCalendar, dateFormat)
 
     @Provides
     @MainScreenScope
@@ -45,7 +45,7 @@ class MainScreenModule {
 
     @Provides
     @MainScreenScope
-    fun provideStartDayFormat() = SimpleDateFormat("yyyy-MM-dd")
+    fun provideStartDayFormat() = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
 
     @Provides
     @MainScreenScope

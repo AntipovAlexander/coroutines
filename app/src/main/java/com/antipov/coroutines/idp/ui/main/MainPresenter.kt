@@ -13,7 +13,6 @@ import kotlinx.coroutines.channels.ticker
 import kotlinx.coroutines.launch
 import ru.terrakok.cicerone.Router
 import timber.log.Timber
-import java.lang.RuntimeException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -24,7 +23,6 @@ class MainPresenter(
     private val repository: StocksRepository,
     private val router: Router,
     private val startDayCalendar: Calendar,
-    private val endDayCalendar: Calendar,
     private val dateFormat: SimpleDateFormat
 ) : BasePresenter<MainView>() {
 
@@ -36,38 +34,55 @@ class MainPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        repository.dropAllStocksInDb()
-        val stockUpdatesChannel = repository.getStockChannel()
-        launch(Dispatchers.Main) {
-            for (stock in stockUpdatesChannel) {
-                viewState.updateUi(stock)
+        clearDb()
+        subscribeUiToStockUpdates()
+        scheduleStockUpdates()
+    }
+
+    private fun clearDb() = repository.dropAllStocksInDb()
+
+    private fun subscribeUiToStockUpdates() =
+        launch(exceptionHandler) {
+            for (stock in repository.getStockChannel()) {
+                launch(Dispatchers.Main) { viewState.updateUi(stock) }
             }
         }
+
+    private fun scheduleStockUpdates() {
         val tickerChannel = ticker(delayMillis = 500, initialDelayMillis = 0)
         launch(exceptionHandler) {
             loop@ for (event in tickerChannel) {
-                startDayCalendar.add(Calendar.DATE, 1)
-                val formattedDay = dateFormat.format(startDayCalendar.timeInMillis)
-                val stock = repository.getStocksAsync(formattedDay).await()
-                if (stock.stockDate.isEmpty()) continue@loop
-                if (!::prevStockPrice.isInitialized) {
-                    prevStockPrice = stock
-                } else {
-                    launch(Dispatchers.Main) {
-                        if (stock.data.close > prevStockPrice.data.close) {
-                            viewState.setViewAsGrowth()
-                        } else {
-                            viewState.setViewAsDesc()
-                        }
-                        prevStockPrice = stock
-                    }
+                val stock = getStocksForNextDay()
+                prevStockPrice = when {
+                    stock.stockDate.isEmpty() -> continue@loop
+                    !::prevStockPrice.isInitialized -> stock
+                    else -> determineViewState(stock)
                 }
-                repository.saveStockToDb(stock)
+                persistStock(stock)
             }
         }
     }
 
-    fun openCalc() {
-        router.navigateTo(Screens.Calculator)
+    private suspend fun persistStock(stock: StockPrice) {
+        repository.saveStockToDb(stock)
     }
+
+    private fun determineViewState(stock: StockPrice): StockPrice {
+        launch(Dispatchers.Main) {
+            if (stock.data.close > prevStockPrice.data.close) {
+                viewState.setViewAsGrowth()
+            } else {
+                viewState.setViewAsDesc()
+            }
+        }
+        return stock
+    }
+
+    private suspend fun getStocksForNextDay(): StockPrice {
+        startDayCalendar.add(Calendar.DATE, 1)
+        val formattedDay = dateFormat.format(startDayCalendar.timeInMillis)
+        return repository.getStocksAsync(formattedDay).await()
+    }
+
+    fun openCalc() = router.navigateTo(Screens.Calculator)
 }
