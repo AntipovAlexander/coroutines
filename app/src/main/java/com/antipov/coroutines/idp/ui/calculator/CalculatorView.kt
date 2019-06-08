@@ -8,4 +8,5 @@ interface CalculatorView : BaseView {
     fun setProgressMax(size: Int)
     fun incrementProgress()
     fun seResult(price: StockPrice)
+    fun onError()
 }

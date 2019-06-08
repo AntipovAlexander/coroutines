@@ -7,6 +7,7 @@ import com.antipov.coroutines.idp.ui.base.BaseActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.activity_calculator.*
+import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 class CalculatorActivity : BaseActivity(), CalculatorView {
@@ -40,5 +41,9 @@ class CalculatorActivity : BaseActivity(), CalculatorView {
 
     override fun seResult(price: StockPrice) {
         result.text = getString(R.string.result_format, price.data.close, price.stockDate)
+    }
+
+    override fun onError() {
+        toast(R.string.error)
     }
 }
