@@ -41,11 +41,11 @@ class StockPriceDao(private val helper: StockPriceDbHelper) {
                 .parseList(object : MapRowParser<MutableList<StockPrice>> {
                     override fun parseRow(columns: Map<String, Any?>): MutableList<StockPrice> {
                         with(columns) {
-                            val stockDate = getValue(StockPriceDbHelper.DATE_COLUMN).toString()
-                            val open = getValue(StockPriceDbHelper.OPEN_COLUMN).toString().toFloat()
-                            val high = getValue(StockPriceDbHelper.HIGH_COLUMN).toString().toFloat()
-                            val low = getValue(StockPriceDbHelper.LOW_COLUMN).toString().toFloat()
-                            val close = getValue(StockPriceDbHelper.CLOSE_COLUMN).toString().toFloat()
+                            val stockDate = getValue(DATE_COLUMN).toString()
+                            val open = getValue(OPEN_COLUMN).toString().toFloat()
+                            val high = getValue(HIGH_COLUMN).toString().toFloat()
+                            val close = getValue(CLOSE_COLUMN).toString().toFloat()
+                            val low = getValue(LOW_COLUMN).toString().toFloat()
                             val dataObj = StockPrice.Data(open, high, low, close)
                             list.add(StockPrice(stockDate, dataObj))
                         }
@@ -63,11 +63,11 @@ class StockPriceDao(private val helper: StockPriceDbHelper) {
                 .parseSingle(object : MapRowParser<StockPrice> {
                     override fun parseRow(columns: Map<String, Any?>): StockPrice {
                         with(columns) {
-                            val stockDate = getValue(StockPriceDbHelper.DATE_COLUMN).toString()
-                            val open = getValue(StockPriceDbHelper.OPEN_COLUMN).toString().toFloat()
-                            val high = getValue(StockPriceDbHelper.HIGH_COLUMN).toString().toFloat()
-                            val low = getValue(StockPriceDbHelper.LOW_COLUMN).toString().toFloat()
-                            val close = getValue(StockPriceDbHelper.CLOSE_COLUMN).toString().toFloat()
+                            val stockDate = getValue(DATE_COLUMN).toString()
+                            val open = getValue(OPEN_COLUMN).toString().toFloat()
+                            val high = getValue(HIGH_COLUMN).toString().toFloat()
+                            val low = getValue(LOW_COLUMN).toString().toFloat()
+                            val close = getValue(CLOSE_COLUMN).toString().toFloat()
                             val dataObj = StockPrice.Data(open, high, low, close)
                             return StockPrice(stockDate, dataObj)
                         }

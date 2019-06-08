@@ -1,4 +1,4 @@
-package com.antipov.coroutines.idp.di.qualifiers
+package com.antipov.coroutines.idp.di
 
 import javax.inject.Qualifier
 

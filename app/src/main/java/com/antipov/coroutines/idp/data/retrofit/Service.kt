@@ -6,7 +6,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface Service {
-    // todo: fix interceptors
     @GET("WIKI/AAPL/data.json?api_key=xw3sqcPrQ42gQnuv4sJQ")
     fun getStockForDayAsync(
         @Query("start_date") start: String,
