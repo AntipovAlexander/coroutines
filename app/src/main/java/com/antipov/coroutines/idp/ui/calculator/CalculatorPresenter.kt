@@ -16,7 +16,7 @@ class CalculatorPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         launch {
-            val data = repository.getAllStocksInDbAsync()
+            val data = repository.getAllStocksInDb()
             val first = repository.getFirstStock()
             launch(Dispatchers.Main) {
                 viewState.setDates(data.first().stockDate, data.last().stockDate)

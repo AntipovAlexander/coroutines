@@ -9,7 +9,7 @@ import kotlin.coroutines.CoroutineContext
 
 abstract class BasePresenter<V : MvpView> : MvpPresenter<V>(), CoroutineScope {
 
-    protected val compositeJob = Job()
+    private val compositeJob = Job()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + compositeJob

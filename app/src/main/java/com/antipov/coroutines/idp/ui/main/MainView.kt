@@ -7,4 +7,5 @@ interface MainView : BaseView {
     fun updateUi(stock: StockPrice)
     fun setViewAsGrowth()
     fun setViewAsDesc()
+    fun onError()
 }

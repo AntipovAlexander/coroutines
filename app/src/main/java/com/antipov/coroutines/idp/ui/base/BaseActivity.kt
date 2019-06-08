@@ -23,8 +23,6 @@ abstract class BaseActivity : MvpAppCompatActivity(), HasSupportFragmentInjector
     lateinit var navigatorHolder: NavigatorHolder
 
     protected abstract val layoutRes: Int
-    // todo: implement CompositeJob
-//    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -41,17 +39,6 @@ abstract class BaseActivity : MvpAppCompatActivity(), HasSupportFragmentInjector
     override fun onPause() {
         navigatorHolder.removeNavigator()
         super.onPause()
-    }
-
-    // todo: implement CompositeJob
-//    protected fun Disposable.addToDisposables() {
-//        compositeDisposable.add(this)
-//    }
-
-    override fun onDestroy() {
-        // todo: implement CompositeJob
-//        compositeDisposable.dispose()
-        super.onDestroy()
     }
 
     /**

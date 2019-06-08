@@ -9,6 +9,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 class MainActivity : BaseActivity(), MainView {
@@ -43,4 +44,8 @@ class MainActivity : BaseActivity(), MainView {
     override fun setViewAsGrowth() = arrow.setImageResource(R.drawable.ic_arrow_growth)
 
     override fun setViewAsDesc() = arrow.setImageResource(R.drawable.ic_arrow_desc)
+
+    override fun onError() {
+        toast(R.string.error)
+    }
 }

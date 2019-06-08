@@ -9,4 +9,5 @@
     <string name="progress">Progress:</string>
     <string name="result_is_not_calculated_yet">Result is not calculated yet.</string>
     <string name="result_format">Highest stock price (%1$f) was on %2$s</string>
+    <string name="error">Error!</string>
 </resources>

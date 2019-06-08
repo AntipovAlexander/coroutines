@@ -5,18 +5,14 @@ import com.antipov.coroutines.idp.data.model.StockPrice
 import com.antipov.coroutines.idp.data.repository.StocksRepository
 import com.antipov.coroutines.idp.navigation.Screens
 import com.antipov.coroutines.idp.ui.base.BasePresenter
+import com.antipov.coroutines.idp.utils.extensions.runOnUi
 import com.arellomobile.mvp.InjectViewState
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.channels.ticker
 import kotlinx.coroutines.launch
 import ru.terrakok.cicerone.Router
-import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
-@UseExperimental(ObsoleteCoroutinesApi::class)
 @SuppressLint("SimpleDateFormat")
 @InjectViewState
 class MainPresenter(
@@ -26,11 +22,9 @@ class MainPresenter(
     private val dateFormat: SimpleDateFormat
 ) : BasePresenter<MainView>() {
 
-    lateinit var prevStockPrice: StockPrice
+    private lateinit var prevStockPrice: StockPrice
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.d(throwable)
-    }
+    private val exceptionHandler = CoroutineExceptionHandler { _, _ -> viewState.onError() }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -44,14 +38,13 @@ class MainPresenter(
     private fun subscribeUiToStockUpdates() =
         launch(exceptionHandler) {
             for (stock in repository.getStockChannel()) {
-                launch(Dispatchers.Main) { viewState.updateUi(stock) }
+                runOnUi { viewState.updateUi(stock) }
             }
         }
 
-    private fun scheduleStockUpdates() {
-        val tickerChannel = ticker(delayMillis = 500, initialDelayMillis = 0)
+    private fun scheduleStockUpdates() =
         launch(exceptionHandler) {
-            loop@ for (event in tickerChannel) {
+            loop@ for (event in repository.getTickerChannel()) {
                 val stock = getStocksForNextDay()
                 prevStockPrice = when {
                     stock.stockDate.isEmpty() -> continue@loop
@@ -61,19 +54,13 @@ class MainPresenter(
                 persistStock(stock)
             }
         }
-    }
 
-    private suspend fun persistStock(stock: StockPrice) {
-        repository.saveStockToDb(stock)
-    }
+    private suspend fun persistStock(stock: StockPrice) = repository.saveStockToDb(stock)
 
     private fun determineViewState(stock: StockPrice): StockPrice {
-        launch(Dispatchers.Main) {
-            if (stock.data.close > prevStockPrice.data.close) {
-                viewState.setViewAsGrowth()
-            } else {
-                viewState.setViewAsDesc()
-            }
+        when (stock.data.close > prevStockPrice.data.close) {
+            true -> runOnUi { viewState.setViewAsGrowth() }
+            false -> runOnUi { viewState.setViewAsDesc() }
         }
         return stock
     }
